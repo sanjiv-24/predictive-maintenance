@@ -14,7 +14,7 @@ def home():
     return {"message": "Predictive Maintenance API Running"}
 
 # Prediction route
-@app.post("/predict")
+@app.get("/predict")
 def predict(data: dict):
 
     # Extract sensor values
