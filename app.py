@@ -3,14 +3,12 @@ import random
 
 app = FastAPI()
 
-# HOME PAGE
 @app.get("/")
 def home():
     return {
         "message": "Predictive Maintenance API Running Successfully"
     }
 
-# PREDICTION API
 @app.get("/predict")
 def predict():
 
