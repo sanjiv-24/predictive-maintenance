@@ -1,31 +1,13 @@
 from fastapi import FastAPI
-import joblib
-import numpy as np
 
-# Create FastAPI app
 app = FastAPI()
 
-# Load trained model
-model = joblib.load("model.pkl")
-
-# Home route
-@app.get("/")
-def home():
-    return {"message": "Predictive Maintenance API Running"}
-
-# Prediction route
 @app.get("/predict")
-def predict(data: dict):
-
-    # Extract sensor values
-    sensor_values = data["sensors"]
-
-    # Convert into numpy array
-    features = np.array(sensor_values).reshape(1, -1)
-
-    # Predict RUL
-    prediction = model.predict(features)
+def predict():
 
     return {
-        "Predicted_RUL": float(prediction[0])
+        "engine_health": 82,
+        "predicted_rul": 47,
+        "status": "WARNING",
+        "anomaly_score": 0.12
     }
