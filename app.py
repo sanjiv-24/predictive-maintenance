@@ -3,6 +3,11 @@ import random
 
 app = FastAPI()
 
+# Global variables
+cycle = 0
+current_rul = 100
+
+
 @app.get("/")
 def home():
 
@@ -10,24 +15,47 @@ def home():
         "message": "Predictive Maintenance API Running"
     }
 
+
 @app.get("/predict")
 def predict():
 
-    predicted_rul = random.randint(10, 100)
+    global cycle
+    global current_rul
 
-    # Better health logic
-    engine_health = min(100, predicted_rul)
+    # Increase engine cycle
+    cycle += 1
 
+    # Reduce RUL gradually
+    current_rul -= random.randint(1, 3)
+
+    # Prevent negative values
+    if current_rul < 0:
+        current_rul = 0
+
+    predicted_rul = current_rul
+
+    # Health calculation
+    engine_health = 100 - predicted_rul
+
+    # Status logic
     if predicted_rul < 20:
         status = "CRITICAL"
+
     elif predicted_rul < 50:
         status = "WARNING"
+
     else:
         status = "HEALTHY"
 
     return {
+
+        "cycle": cycle,
+
         "engine_health": engine_health,
+
         "predicted_rul": predicted_rul,
+
         "status": status,
-        "anomaly_score": round(random.uniform(0,1),2)
+
+        "anomaly_score": round(random.uniform(0, 1), 2)
     }

@@ -1,38 +1,52 @@
-import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
 import joblib
+import os
 
-# Column names
-cols = ['unit', 'cycle'] + [f'op{i}' for i in range(1,4)] + [f's{i}' for i in range(1,22)]
+from preprocess import load_data, create_rul
 
 # Load dataset
-df = pd.read_csv(
-    'data/train_FD001.txt',
-    sep='\s+',
-    header=None
-)
+df = load_data()
 
-df.columns = cols
-
-# Create Remaining Useful Life (RUL)
-max_cycle = df.groupby('unit')['cycle'].max()
-
-df = df.merge(max_cycle.rename('max_cycle'), on='unit')
-
-df['RUL'] = df['max_cycle'] - df['cycle']
+# Create RUL labels
+df = create_rul(df)
 
 # Features
-X = df[[f's{i}' for i in range(1,22)]]
+X = df.drop(columns=['RUL'])
 
 # Target
 y = df['RUL']
 
-# Train model
-model = RandomForestRegressor(n_estimators=50)
+# Split
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
 
-model.fit(X, y)
+# Model
+model = RandomForestRegressor(
+    n_estimators=50,
+    random_state=42
+)
+
+# Train
+model.fit(X_train, y_train)
+
+# Predict
+predictions = model.predict(X_test)
+
+# Accuracy
+mae = mean_absolute_error(y_test, predictions)
+
+print(f"MAE: {mae}")
+
+# Create folder if not exists
+os.makedirs("saved_model", exist_ok=True)
 
 # Save model
-joblib.dump(model, 'model.pkl')
+joblib.dump(model, "saved_model/rf_model.pkl")
 
-print("Model trained and saved as model.pkl")
+print("MODEL SAVED")
