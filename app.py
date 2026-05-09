@@ -1,3 +1,5 @@
+import os
+PORT = int(os.environ.get("PORT", 10000))
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 

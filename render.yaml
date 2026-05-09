@@ -1,6 +1,7 @@
 services:
   - type: web
-    name: predictive-maintenance
+    name: predictive-maintenance-api
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app:app --host 0.0.0.0 --port 10000
+    startCommand: uvicorn app:app --host 0.0.0.0 --port ${PORT:-10000}
+    plan: free
