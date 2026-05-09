@@ -1,11 +1,31 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import random
 
 app = FastAPI()
 
+# -----------------------------
+# CORS CONFIGURATION
+# -----------------------------
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# -----------------------------
+# GLOBAL VARIABLES
+# -----------------------------
+
 cycle = 0
 current_rul = 100
 
+# -----------------------------
+# HOME ROUTE
+# -----------------------------
 
 @app.get("/")
 def home():
@@ -14,6 +34,9 @@ def home():
         "message": "Predictive Maintenance API Running"
     }
 
+# -----------------------------
+# PREDICTION ROUTE
+# -----------------------------
 
 @app.get("/predict")
 def predict():
