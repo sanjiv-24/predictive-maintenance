@@ -3,7 +3,6 @@ import random
 
 app = FastAPI()
 
-# Global variables
 cycle = 0
 current_rul = 100
 
@@ -22,7 +21,7 @@ def predict():
     global cycle
     global current_rul
 
-    # Increase engine cycle
+    # Increase cycle
     cycle += 1
 
     # Reduce RUL gradually
@@ -34,8 +33,11 @@ def predict():
 
     predicted_rul = current_rul
 
-    # Health calculation
-    engine_health = 100 - predicted_rul
+    # Engine health
+    engine_health = max(
+        0,
+        min(100, predicted_rul)
+    )
 
     # Status logic
     if predicted_rul < 20:
@@ -45,7 +47,7 @@ def predict():
         status = "WARNING"
 
     else:
-        status = "HEALTHY"
+        status = "NORMAL"
 
     return {
 
@@ -57,5 +59,8 @@ def predict():
 
         "status": status,
 
-        "anomaly_score": round(random.uniform(0, 1), 2)
+        "anomaly_score": round(
+            random.uniform(0, 1),
+            2
+        )
     }
